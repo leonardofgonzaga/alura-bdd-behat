@@ -10,12 +10,12 @@ Funcionalidade: Cadastro de formações
     - Descrição precisa ter pelo menos 2 palavras
 
     Cenário: Cadastro de formação com uma palavra
-        Quando eu tentar criarum formação com apenas uma palavra 
+        Quando eu tentar criar uma formação com a descriçao "PHP"
         Então eu vou ver a seguinte mensagem de erro "Descrição precisa ter pelo menos 2 palavras"
 
     Cenário: Cadastro de formação válida deve salvar no banco 
         Dado que estou conectado ao banco de dados
-        Quando tento criar uma nova formação válida
+        Quando tento criar uma nova formação com a descriçao "PHP na web"
         Então se eu buscar no banco, devo encontrar essa formação
 
     
