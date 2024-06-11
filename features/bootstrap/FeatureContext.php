@@ -1,15 +1,25 @@
 <?php
 
-use Behat\Behat\Tester\Exception\PendingException;
+use Doctrine\ORM\EntityManager;
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\PyStringNode;
+use Alura\Armazenamento\Entity\Curso;
+use Alura\Armazenamento\Entity\Formacao;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
+use Behat\Behat\Tester\Exception\PendingException;
+use Alura\Armazenamento\Infra\EntitymanagerCreator;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context
 {
+    private EntityManagerInterface $em;
+    private string $mensagemErro;
+    private int $idFormacaoInserida;
+
     /**
      * Initializes context.
      *
@@ -22,19 +32,25 @@ class FeatureContext implements Context
     }
 
     /**
-     * @When eu tentar criar uma formação com a descriçao :arg1
+     * @When eu tentar criar uma formação com a descrição :arg1
      */
-    public function euTentarCriarUmaFormacaoComADescricao($arg1)
+    public function euTentarCriarUmaFormacaoComADescricao(string $descricaoFormacao)
     {
-        throw new PendingException();
+        $formacao = new Formacao();
+
+        try {
+            $formacao->setDescricao($descricaoFormacao);
+        } catch (\InvalidArgumentException $exception) {
+            $this->mensagemErro = $exception->getMessage();
+        }
     }
 
     /**
      * @Then eu vou ver a seguinte mensagem de erro :arg1
      */
-    public function euVouVerASeguinteMensagemDeErro($arg1)
+    public function euVouVerASeguinteMensagemDeErro($mensagemErro)
     {
-        throw new PendingException();
+        assert($mensagemErro === $this->mensagemErro);
     }
 
     /**
@@ -42,22 +58,34 @@ class FeatureContext implements Context
      */
     public function queEstouConectadoAoBancoDeDados()
     {
-        throw new PendingException();
+        $this->em = (new EntitymanagerCreator())->getEntityManager();
     }
 
     /**
-     * @When tento criar uma nova formação com a descriçao :arg1
+     * @When tento salvar uma nova formação com a descrição :descricaoFormacao
      */
-    public function tentoCriarUmaNovaFormacaoComADescricao($arg1)
+    public function tentoSalvarUmaNovaFormacaoComADescricao(string $descricaoFormacao)
     {
-        throw new PendingException();
+        $formacao = new Formacao();
+        $formacao->setDescricao($descricaoFormacao);
+
+        $this->em->persist($formacao);
+        $this->em->flush();
+
+        $this->idFormacaoInserida = $formacao->getId();
     }
 
     /**
-     * @Then se eu buscar no banco, devo encontrar essa formação
+     * @Then se eu buscar no banco, devo encontar essa formação
      */
-    public function seEuBuscarNoBancoDevoEncontrarEssaFormacao()
+    public function seEuBuscarNoBancoDevoEncontarEssaFormacao()
     {
-        throw new PendingException();
+        /** @var ObjectRepository $repositorio */
+        $repositorio = $this->em->getRepository(Formacao::class);
+        
+        /** @var Formacao $formacao */
+        $formacao = $repositorio->find($this->idFormacaoInserida);
+
+        assert($formacao instanceof Formacao);
     }
 }
