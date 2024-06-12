@@ -14,10 +14,9 @@ use Alura\Armazenamento\Infra\EntitymanagerCreator;
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext implements Context
+class FormacaoNoBanco implements Context
 {
     private EntityManagerInterface $em;
-    private string $mensagemErro;
     private int $idFormacaoInserida;
 
     /**
@@ -29,29 +28,7 @@ class FeatureContext implements Context
      */
     public function __construct()
     {
-    }
-
-    /**
-     * @When eu tentar criar uma formação com a descrição :arg1
-     */
-    public function euTentarCriarUmaFormacaoComADescricao(string $descricaoFormacao)
-    {
-        $formacao = new Formacao();
-
-        try {
-            $formacao->setDescricao($descricaoFormacao);
-        } catch (\InvalidArgumentException $exception) {
-            $this->mensagemErro = $exception->getMessage();
-        }
-    }
-
-    /**
-     * @Then eu vou ver a seguinte mensagem de erro :arg1
-     */
-    public function euVouVerASeguinteMensagemDeErro($mensagemErro)
-    {
-        assert($mensagemErro === $this->mensagemErro);
-    }
+    }    
 
     /**
      * @Given que estou conectado ao banco de dados

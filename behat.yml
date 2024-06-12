@@ -2,4 +2,15 @@ default:
   suites:
     default:
       contexts:
-        - FeatureContext
+        - FormacaoEmMemoria
+        - FormacaoNoBanco
+    unidade:
+      contexts:
+        - FormacaoEmMemoria
+      filters:
+        tags: unidade
+    integracao:
+      contexts:
+        - FormacaoEmMemoria
+      filters:
+        tags: integracao
